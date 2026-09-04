@@ -1,10 +1,4 @@
-from itemadapter import ItemAdapter
 from openpyxl import Workbook
-
-
-class HubScrapyPipeline:
-    def process_item(self, item):
-        return item
 
 
 class NumberingPipeline:
@@ -13,7 +7,7 @@ class NumberingPipeline:
 
     def process_item(self, item, spider):
         self.counter += 1
-        return {"№": self.counter, **item}
+        return {'№': self.counter, **item}
 
 
 class XlsxExportPipeline:
@@ -30,4 +24,4 @@ class XlsxExportPipeline:
         return item
 
     def close_spider(self, spider):
-        self.wb.save("materials.xlsx")
+        self.wb.save('materials.xlsx')
