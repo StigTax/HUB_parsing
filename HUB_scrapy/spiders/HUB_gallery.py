@@ -16,7 +16,15 @@ class HubGallerySpider(scrapy.Spider):
 
     def start_requests(self):
         for url in self.start_urls:
-            yield scrapy.Request(url, meta={'playwright': True})
+            yield scrapy.Request(
+                url,
+                meta={
+                    "playwright": True,
+                    "playwright_page_goto_kwargs": {
+                        "wait_until": "domcontentloaded"
+                    },
+                },
+            )
 
     def parse(self, response):
         for a in response.css('a[href^="/gallery/"]'):
@@ -28,16 +36,29 @@ class HubGallerySpider(scrapy.Spider):
                 yield response.follow(
                     href,
                     callback=self.parse_object,
-                    meta={"playwright": True},
+                    meta={
+                        "playwright": True,
+                        "playwright_page_goto_kwargs": {
+                            "wait_until": "domcontentloaded"
+                        },
+                    }
                 )
 
         next_page = response.css(
             'a[title="На следующую страницу"]::attr(href)'
         ).get()
         if next_page:
-            yield response.follow(next_page, callback=self.parse, meta={
-                "playwright": True
-            })
+            yield response.follow(
+                next_page,
+                callback=self.parse,
+                meta={
+                    "playwright": True,
+                    "playwright_page_goto_kwargs": {
+                        "wait_until":
+                        "domcontentloaded"
+                    },
+                }
+            )
 
     def parse_object(self, response):
         object_url = response.url

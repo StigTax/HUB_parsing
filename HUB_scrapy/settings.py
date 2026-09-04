@@ -22,9 +22,13 @@ ADDONS = {}
 ROBOTSTXT_OBEY = False
 
 # Concurrency and throttling settings
-CONCURRENT_REQUESTS = 4
+CONCURRENT_REQUESTS = 8
 CONCURRENT_REQUESTS_PER_DOMAIN = 8
-DOWNLOAD_DELAY = 1
+DOWNLOAD_DELAY = 0
+AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_START_DELAY = 0.25
+AUTOTHROTTLE_MAX_DELAY = 3
+AUTOTHROTTLE_TARGET_CONCURRENCY = 4.0
 
 # Disable cookies (enabled by default)
 # COOKIES_ENABLED = False
@@ -34,8 +38,8 @@ DOWNLOAD_DELAY = 1
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
-   "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-   "Accept-Language": "ru-RU,ru;q=0.9,en;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "ru-RU,ru;q=0.9,en;q=0.8",
 }
 
 # Enable or disable spider middlewares
@@ -52,6 +56,13 @@ DOWNLOAD_HANDLERS = {
 }
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 PLAYWRIGHT_BROWSER_TYPE = "chromium"
+
+
+def should_abort_request(request):
+    return request.resource_type in ("image", "media", "font", "stylesheet")
+
+
+PLAYWRIGHT_ABORT_REQUEST = should_abort_request
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
